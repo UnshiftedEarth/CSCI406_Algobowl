@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -112,24 +113,25 @@ public class AlgoOutputGenerator {
 		String[] s = scanner.nextLine().split(" ");
 		
 		// populate universal set
-		ArrayList<Integer> universal = new ArrayList<>();
-		for (int i = 1; i <= n; i++)
+		HashSet<Integer> universal = new HashSet<>();
+		for (int i = 1; i <= n; i++) // O(n)
 			universal.add(i);
 		// create summation variable
 		int sum = 0;
 		
 		// loop through the subset ids
-		for (String index : s) {
+		for (String index : s) { // O(m)
 			Subset set = subsets.get(Integer.parseInt(index) - 1);
 			sum += set.weight;
 			// loop through each item in the subset and remove from universal set
-			for (int i : set.set) {
-				if (universal.contains(i))
+			for (int i : set.set) { // O(n)
+				if (universal.contains(i)) // constant time
 					// remove the number from the universal set
-					universal.remove(universal.indexOf(i));
+					universal.remove(i); // constant time
 					
 			}
 		}
+		// Complexity: O(m*n + n)
 
 		// check if the universal set is empty and if minimum weight is correct
 		if (universal.isEmpty() && sum == minWeight) 
