@@ -43,11 +43,15 @@ public class AlgoOutputGenerator {
 		
 			ArrayList<Integer> nextSubset = new ArrayList<Integer>();
 			while (subsetScanner.hasNextInt()) {
-			nextSubset.add(subsetScanner.nextInt());
+				nextSubset.add(subsetScanner.nextInt());
 			}
 			int w = Integer.parseInt(inputScanner.nextLine());
 			subsets.add(new Subset(w, nextSubset));
+
+			subsetScanner.close();
 		}
+
+		inputScanner.close();
 	}
 	
 	// basic algorithm outline:
@@ -94,11 +98,54 @@ public class AlgoOutputGenerator {
 		}
 	}
 
+	public void outputVerification(String filename) {
+		FileReader file;
+		try {
+			file = new FileReader(filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		Scanner scanner = new Scanner(file);
+		int minWeight = Integer.parseInt(scanner.nextLine());
+		String[] s = scanner.nextLine().split(" ");
+		
+		// populate universal set
+		ArrayList<Integer> universal = new ArrayList<>();
+		for (int i = 1; i <= n; i++)
+			universal.add(i);
+		// create summation variable
+		int sum = 0;
+		
+		// loop through the subset ids
+		for (String index : s) {
+			Subset set = subsets.get(Integer.parseInt(index) - 1);
+			sum += set.weight;
+			// loop through each item in the subset and remove from universal set
+			for (int i : set.set) {
+				if (universal.contains(i))
+					// remove the number from the universal set
+					universal.remove(universal.indexOf(i));
+					
+			}
+		}
+
+		// check if the universal set is empty and if minimum weight is correct
+		if (universal.isEmpty() && sum == minWeight) 
+			System.out.println("File " + filename + " is valid :)");
+		else 
+			System.out.println("ERROR: FILE " + filename + " IS NOT VALID");
+
+		scanner.close();
+	}
+
 	public static void main(String[] args) {
-		String file = "test_2.txt";
+		String file = "test_1.txt";
 		AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
-//		algo.verifyFileRead();
-		algo.verifyMapping();
+		algo.verifyFileRead();
+		//algo.verifyMapping();
+		algo.outputVerification("output1.txt");
 
 	}
 
