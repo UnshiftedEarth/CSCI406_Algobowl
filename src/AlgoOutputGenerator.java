@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -76,7 +77,30 @@ public class AlgoOutputGenerator {
 	}
 	
 	private boolean checkIfCoverIsComplete() {
-		//TODO
+		// populate universal set
+		HashSet<Integer> universal = new HashSet<>();
+		for (int i = 1; i <= n; i++) // O(n)
+			universal.add(i);
+		
+		// loop through the subset ids
+		for (Subset s : cover) { // O(m)
+			// If universal set is empty, stop the loop
+			if (universal.isEmpty())
+				break;
+
+			// loop through each item in the subset and remove from universal set
+			for (int i : s.set) { // O(n)
+				if (universal.contains(i)) // constant time
+					// remove the number from the universal set
+					universal.remove(i); // constant time
+					
+			}
+		}
+		// Complexity: O(m*n + n)
+
+		if (universal.isEmpty())
+			return true;
+			
 		return false;
 	}
 	
