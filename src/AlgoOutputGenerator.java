@@ -123,6 +123,10 @@ public class AlgoOutputGenerator {
 		for (String index : s) { // O(m)
 			Subset set = subsets.get(Integer.parseInt(index) - 1);
 			sum += set.weight;
+			// If empty, skip the inner loop, continue calculating the sum
+			if (universal.isEmpty())
+				continue;
+
 			// loop through each item in the subset and remove from universal set
 			for (int i : set.set) { // O(n)
 				if (universal.contains(i)) // constant time
