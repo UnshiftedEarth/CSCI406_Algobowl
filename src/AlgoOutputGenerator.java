@@ -13,7 +13,6 @@ public class AlgoOutputGenerator {
 	int n;
 	int m;
 	ArrayList<Subset> subsets;
-	
 	ArrayList<Subset> cover;
 	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>();
 
@@ -69,6 +68,16 @@ public class AlgoOutputGenerator {
 			}
 			mappedSubsets.put(x, listOfSubsetsWithX);
 		}
+	}
+	
+	private Subset getNextSubset() {
+		//TODO
+		return null;
+	}
+	
+	private boolean checkIfCoverIsComplete() {
+		//TODO
+		return false;
 	}
 	
 	public void verifyFileRead() {
