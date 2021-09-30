@@ -240,16 +240,9 @@ public class AlgoOutputGenerator {
 	public static void main(String[] args) {
 		String file = "test_1.txt";
 		AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
-<<<<<<< HEAD
-		algo.verifyFileRead();
-		//algo.verifyMapping();
-		algo.outputVerification("output1.txt");
-
-=======
 //		algo.verifyFileRead();
 		algo.verifyMapping();
 		algo.generateCover();
->>>>>>> 73d0398d64db07940b3f52376e62b978e6c52584
 	}
 
 }
