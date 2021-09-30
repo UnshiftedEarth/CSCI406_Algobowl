@@ -40,7 +40,13 @@ public class AlgoOutputGenerator {
 	public void generateCover() {
 		while (!coverIsComplete()) {
 			ArrayList<Subset> nextList = getListOfFewestSubsets();
-			cover.add(chooseSubsetLeastWeight(nextList));
+			Subset s = chooseSubsetLeastWeight(nextList);
+			cover.add(s);
+			// remove ints from universal set
+			for (int i : s.set) { // O(n) complexity
+				if (universal.contains(i))
+					universal.remove(i);
+			}
 		}
 		//TODO: create output file
 		System.out.println("Cover is complete!"); //temp confirmation
@@ -142,23 +148,9 @@ public class AlgoOutputGenerator {
 		return null;
 	}
 	
-	// suggestion: remove ints from universal when a subset is added to cover
-	// we wouldn't have to loop through all subsets in cover to check if it is complete
+	// Since we remove the ints from universal set in generateCover()
+	// we only need to check if the set is empty.
 	private boolean coverIsComplete() {
-
-		// loop through the subset ids
-		for (Subset s : cover) { // O(m)
-			// If universal set is empty, stop the loop
-			if (universal.isEmpty()) return true;
-
-			// loop through each item in the subset and remove from universal set
-			for (int i : s.set) { // O(n)
-				if (universal.contains(i)) // constant time
-					// remove the number from the universal set
-					universal.remove(i); // constant time
-			}
-		}
-		// Complexity: O(m*n + n)
 		if (universal.isEmpty()) return true;
 		return false;
 	}
