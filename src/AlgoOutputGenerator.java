@@ -13,10 +13,10 @@ public class AlgoOutputGenerator {
 	String fileName;
 	int n;
 	int m;
-	ArrayList<Subset> subsets;
-	
-	ArrayList<Subset> cover;
-	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>();
+	ArrayList<Subset> subsets; // temp storage as file is read
+	ArrayList<Subset> cover; // solution set of of subsets
+	HashSet<Integer> universal; // remaining ints to be covered (starts with 1 to n)
+	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>(); //should this be a hashset also?
 
 	public AlgoOutputGenerator(String inputFileName){
 		fileName = inputFileName;
@@ -28,9 +28,23 @@ public class AlgoOutputGenerator {
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		}
+		// populate universal set
+		universal = new HashSet<>();
+		for (int i = 1; i <= n; i++) {// O(n)
+			universal.add(i);
+		}
 		mapSubsets();
+
 	}
 
+	public void generateCover() {
+		while (!coverIsComplete()) {
+			ArrayList<Subset> nextList = getListOfFewestSubsets();
+			cover.add(chooseSubsetLeastWeight(nextList));
+		}
+		//TODO: create output file
+		System.out.println("Cover is complete!"); //temp confirmation
+	}
 	private void readFile() throws FileNotFoundException{
 		FileReader inputFileReader = new FileReader(fileName);
 		Scanner inputScanner = new Scanner(inputFileReader);
@@ -74,6 +88,83 @@ public class AlgoOutputGenerator {
 			}
 			mappedSubsets.put(x, listOfSubsetsWithX);
 		}
+	}
+	
+	private ArrayList<Subset> getListOfFewestSubsets() {
+		//initialize with first subset in map (avoid returning null)
+		int next = universal.iterator().next();
+		int xWithFewestSubsets = next;
+		int fewestSubsets = mappedSubsets.get(next).size(); // 1 is integer key, not index of map
+		
+		// find int x with fewest number of subsets that include x
+		// skip ints that are already covered (loop through universal instead of all ints)
+		for (int i: universal) { 
+			ArrayList<Subset> list = mappedSubsets.get(i);
+			
+			// don't count subsets that are already included in cover
+			// this could be constant time if we just check for size
+			// not counting subsets that are already included will give a better solution, at the expense of efficiency
+			int listSize = 0;
+			for (Subset s: list) { 
+				if (!cover.contains(s)) listSize++;
+			}
+			if (listSize < fewestSubsets) {
+				fewestSubsets = listSize;
+				xWithFewestSubsets = i;
+			}
+		}
+		return mappedSubsets.get(xWithFewestSubsets);
+	}
+	
+	// three choices for choosing a subset: 
+	// 1. choose subset with least weight
+	// 2. choose subset with largest size (to fill cover more quickly)
+	// 3. choose subset with greatest size/weight ratio
+	private Subset chooseSubsetLeastWeight(ArrayList<Subset> arrayList) {
+		//initialize with first subset
+		int chosenWeight = arrayList.get(0).weight;
+		Subset chosen = arrayList.get(0);
+		
+		for (Subset s: arrayList) {
+			if (s.weight < chosenWeight) {
+				chosen = s;
+				chosenWeight = s.weight;
+			}
+		}
+		return chosen;
+	}
+
+	//TODO
+	private Subset chooseSubsetGreatestSize(ArrayList<Subset> arrayList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//TODO
+	private Subset chooseSubsetGreatestSizeWeightRatio(ArrayList<Subset> arrayList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	// suggestion: remove ints from universal when a subset is added to cover
+	// we wouldn't have to loop through all subsets in cover to check if it is complete
+	private boolean coverIsComplete() {
+
+		// loop through the subset ids
+		for (Subset s : cover) { // O(m)
+			// If universal set is empty, stop the loop
+			if (universal.isEmpty()) return true;
+
+			// loop through each item in the subset and remove from universal set
+			for (int i : s.set) { // O(n)
+				if (universal.contains(i)) // constant time
+					// remove the number from the universal set
+					universal.remove(i); // constant time
+			}
+		}
+		// Complexity: O(m*n + n)
+		if (universal.isEmpty()) return true;
+		return false;
 	}
 	
 	public void verifyFileRead() {
@@ -149,10 +240,16 @@ public class AlgoOutputGenerator {
 	public static void main(String[] args) {
 		String file = "test_1.txt";
 		AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
+<<<<<<< HEAD
 		algo.verifyFileRead();
 		//algo.verifyMapping();
 		algo.outputVerification("output1.txt");
 
+=======
+//		algo.verifyFileRead();
+		algo.verifyMapping();
+		algo.generateCover();
+>>>>>>> 73d0398d64db07940b3f52376e62b978e6c52584
 	}
 
 }
