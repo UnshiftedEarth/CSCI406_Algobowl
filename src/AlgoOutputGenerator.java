@@ -63,11 +63,15 @@ public class AlgoOutputGenerator {
 		
 			ArrayList<Integer> nextSubset = new ArrayList<Integer>();
 			while (subsetScanner.hasNextInt()) {
-			nextSubset.add(subsetScanner.nextInt());
+				nextSubset.add(subsetScanner.nextInt());
 			}
 			int w = Integer.parseInt(inputScanner.nextLine());
 			subsets.add(new Subset(w, nextSubset));
+
+			subsetScanner.close();
 		}
+
+		inputScanner.close();
 	}
 	
 	// basic algorithm outline:
@@ -175,6 +179,54 @@ public class AlgoOutputGenerator {
 			}
 			System.out.println(printSubsetsWithX);
 		}
+	}
+
+
+	public void outputVerification(String filename) {
+		FileReader file;
+		try {
+			file = new FileReader(filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		Scanner scanner = new Scanner(file);
+		int minWeight = Integer.parseInt(scanner.nextLine());
+		String[] s = scanner.nextLine().split(" ");
+		
+		// populate universal set
+		HashSet<Integer> universal = new HashSet<>();
+		for (int i = 1; i <= n; i++) // O(n)
+			universal.add(i);
+		// create summation variable
+		int sum = 0;
+		
+		// loop through the subset ids
+		for (String index : s) { // O(m)
+			Subset set = subsets.get(Integer.parseInt(index) - 1);
+			sum += set.weight;
+			// If empty, skip the inner loop, continue calculating the sum
+			if (universal.isEmpty())
+				continue;
+
+			// loop through each item in the subset and remove from universal set
+			for (int i : set.set) { // O(n)
+				if (universal.contains(i)) // constant time
+					// remove the number from the universal set
+					universal.remove(i); // constant time
+					
+			}
+		}
+		// Complexity: O(m*n + n)
+
+		// check if the universal set is empty and if minimum weight is correct
+		if (universal.isEmpty() && sum == minWeight) 
+			System.out.println("File " + filename + " is valid :)");
+		else 
+			System.out.println("ERROR: FILE " + filename + " IS NOT VALID");
+
+		scanner.close();
 	}
 
 	//TODO @Amber
