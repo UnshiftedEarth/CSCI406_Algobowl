@@ -7,10 +7,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-
 public class AlgoOutputGenerator {
 
-	String fileName;
+	String inputFileName;
 	int n;
 	int m;
 	ArrayList<Subset> subsets; // temp storage as file is read
@@ -18,8 +17,8 @@ public class AlgoOutputGenerator {
 	HashSet<Integer> universal; // remaining ints to be covered (starts with 1 to n)
 	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>(); //should this be a hashset also?
 
-	public AlgoOutputGenerator(String inputFileName){
-		fileName = inputFileName;
+	public AlgoOutputGenerator(String file){
+		inputFileName = file;
 		subsets = new ArrayList<Subset>();
 		cover = new ArrayList<Subset>();
 		
@@ -40,13 +39,19 @@ public class AlgoOutputGenerator {
 	public void generateCover() {
 		while (!coverIsComplete()) {
 			ArrayList<Subset> nextList = getListOfFewestSubsets();
-			cover.add(chooseSubsetLeastWeight(nextList));
+			Subset s = chooseSubsetLeastWeight(nextList);
+			cover.add(s);
+			// remove ints from universal set
+			for (int i : s.set) { // O(n) complexity
+				if (universal.contains(i))
+					universal.remove(i);
+			}
 		}
 		//TODO: create output file
 		System.out.println("Cover is complete!"); //temp confirmation
 	}
 	private void readFile() throws FileNotFoundException{
-		FileReader inputFileReader = new FileReader(fileName);
+		FileReader inputFileReader = new FileReader(inputFileName);
 		Scanner inputScanner = new Scanner(inputFileReader);
 		n = Integer.parseInt(inputScanner.nextLine());
 		m = Integer.parseInt(inputScanner.nextLine());
@@ -146,23 +151,9 @@ public class AlgoOutputGenerator {
 		return null;
 	}
 	
-	// suggestion: remove ints from universal when a subset is added to cover
-	// we wouldn't have to loop through all subsets in cover to check if it is complete
+	// Since we remove the ints from universal set in generateCover()
+	// we only need to check if the set is empty.
 	private boolean coverIsComplete() {
-
-		// loop through the subset ids
-		for (Subset s : cover) { // O(m)
-			// If universal set is empty, stop the loop
-			if (universal.isEmpty()) return true;
-
-			// loop through each item in the subset and remove from universal set
-			for (int i : s.set) { // O(n)
-				if (universal.contains(i)) // constant time
-					// remove the number from the universal set
-					universal.remove(i); // constant time
-			}
-		}
-		// Complexity: O(m*n + n)
 		if (universal.isEmpty()) return true;
 		return false;
 	}
@@ -189,6 +180,7 @@ public class AlgoOutputGenerator {
 			System.out.println(printSubsetsWithX);
 		}
 	}
+
 
 	public void outputVerification(String filename) {
 		FileReader file;
@@ -237,12 +229,37 @@ public class AlgoOutputGenerator {
 		scanner.close();
 	}
 
-	public static void main(String[] args) {
-		String file = "test_1.txt";
-		AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
-//		algo.verifyFileRead();
-		algo.verifyMapping();
-		algo.generateCover();
+	//TODO @Amber
+	private String generateOutputFile() {
+		String outputFileName = "output_" + inputFileName;
+		// TODO Auto-generated method stub
+
+		//return name of output file
+		return outputFileName;
 	}
+	
+	public static void main(String[] args) {
+		String[] inputFileList = {
+				"test_1.txt",
+				"test_2.txt",
+				"test_3.txt",
+				"test_4.txt"
+		};
+		
+		for (String file: inputFileList) {
+			AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
+			System.out.println(file + " was read.");
+			
+			algo.generateCover();
+			System.out.println(file + " cover was created.");
+			
+			String outputFileName = algo.generateOutputFile();
+			System.out.println(file + " output file was created as " + outputFileName);
+			
+//			algo.outputVerification(outputFileName);
+			
+		}
+	}
+
 
 }
