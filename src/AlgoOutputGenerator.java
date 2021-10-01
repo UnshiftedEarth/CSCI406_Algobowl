@@ -12,10 +12,10 @@ public class AlgoOutputGenerator {
 	String inputFileName;
 	int n;
 	int m;
-	ArrayList<Subset> subsets; // temp storage as file is read
-	ArrayList<Subset> cover; // solution set of of subsets
+	ArrayList<Subset> subsets; // temp storage as file is read, also used to verify output file
+	ArrayList<Subset> cover; // solution set of subsets
 	HashSet<Integer> universal; // remaining ints to be covered (starts with 1 to n)
-	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>(); //should this be a hashset also?
+	Map<Integer, ArrayList<Subset>> mappedSubsets = new TreeMap<Integer, ArrayList<Subset>>(); //should this be a hashmap?
 
 	public AlgoOutputGenerator(String file){
 		inputFileName = file;
@@ -47,9 +47,8 @@ public class AlgoOutputGenerator {
 					universal.remove(i);
 			}
 		}
-		//TODO: create output file
-		System.out.println("Cover is complete!"); //temp confirmation
 	}
+	
 	private void readFile() throws FileNotFoundException{
 		FileReader inputFileReader = new FileReader(inputFileName);
 		Scanner inputScanner = new Scanner(inputFileReader);
@@ -182,13 +181,13 @@ public class AlgoOutputGenerator {
 	}
 
 
-	public void outputVerification(String filename) {
+	public boolean outputVerification(String filename) {
 		FileReader file;
 		try {
 			file = new FileReader(filename);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return;
+			return false;
 		}
 
 		Scanner scanner = new Scanner(file);
@@ -196,9 +195,9 @@ public class AlgoOutputGenerator {
 		String[] s = scanner.nextLine().split(" ");
 		
 		// populate universal set
-		HashSet<Integer> universal = new HashSet<>();
+		HashSet<Integer> universalVerify = new HashSet<>();
 		for (int i = 1; i <= n; i++) // O(n)
-			universal.add(i);
+			universalVerify.add(i);
 		// create summation variable
 		int sum = 0;
 		
@@ -207,26 +206,25 @@ public class AlgoOutputGenerator {
 			Subset set = subsets.get(Integer.parseInt(index) - 1);
 			sum += set.weight;
 			// If empty, skip the inner loop, continue calculating the sum
-			if (universal.isEmpty())
+			if (universalVerify.isEmpty())
 				continue;
 
 			// loop through each item in the subset and remove from universal set
 			for (int i : set.set) { // O(n)
-				if (universal.contains(i)) // constant time
+				if (universalVerify.contains(i)) // constant time
 					// remove the number from the universal set
-					universal.remove(i); // constant time
+					universalVerify.remove(i); // constant time
 					
 			}
 		}
+		scanner.close();
 		// Complexity: O(m*n + n)
 
 		// check if the universal set is empty and if minimum weight is correct
-		if (universal.isEmpty() && sum == minWeight) 
-			System.out.println("File " + filename + " is valid :)");
+		if (universalVerify.isEmpty() && (sum == minWeight)) 
+			return true;
 		else 
-			System.out.println("ERROR: FILE " + filename + " IS NOT VALID");
-
-		scanner.close();
+			return false;
 	}
 
 	//TODO @Amber
@@ -246,20 +244,24 @@ public class AlgoOutputGenerator {
 				"test_4.txt"
 		};
 		
-		for (String file: inputFileList) {
-			AlgoOutputGenerator algo = new AlgoOutputGenerator(file);
-			System.out.println(file + " was read.");
+		for (String inputFile: inputFileList) {
+			AlgoOutputGenerator algo = new AlgoOutputGenerator(inputFile);
+			System.out.println(inputFile + " was read.");
 			
 			algo.generateCover();
-			System.out.println(file + " cover was created.");
+			System.out.println(inputFile + " cover was created.");
 			
-			String outputFileName = algo.generateOutputFile();
-			System.out.println(file + " output file was created as " + outputFileName);
+//			String outputFileName = algo.generateOutputFile();
+//			System.out.println(inputFile + " output file was created as " + outputFileName);
+//			
+//			boolean verificationSuccess = algo.outputVerification(outputFileName);
+//			if (verificationSuccess) {
+//				System.out.println(outputFileName + " output file was verified.");
+//			} else {
+//				System.out.println(outputFileName + " output file failed verification.");
+//			}
 			
-//			algo.outputVerification(outputFileName);
-			
+			System.out.println();
 		}
 	}
-
-
 }
