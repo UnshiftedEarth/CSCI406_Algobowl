@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Subset {
 
 	public int weight;
-	public ArrayList<Integer> set = new ArrayList<Integer>();	
+	public HashSet<Integer> set = new HashSet<Integer>();	
 	
-	public Subset(int weight, ArrayList<Integer> set) {
+	public Subset(int weight, HashSet<Integer> set) {
 		this.weight = weight;
 		this.set = set;
 	}
