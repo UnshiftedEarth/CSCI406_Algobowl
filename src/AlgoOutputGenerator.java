@@ -62,7 +62,7 @@ public class AlgoOutputGenerator {
 			String nextSubsetString = inputScanner.nextLine();
 			Scanner subsetScanner = new Scanner(nextSubsetString);
 		
-			ArrayList<Integer> nextSubset = new ArrayList<Integer>();
+			HashSet<Integer> nextSubset = new HashSet<Integer>();
 			while (subsetScanner.hasNextInt()) {
 				nextSubset.add(subsetScanner.nextInt());
 			}
