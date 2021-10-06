@@ -37,7 +37,7 @@ public class InputGenerator {
 	//elements, results from this function are not guaranteed to have a solution
 	public static void createSetsRandom() {
 		for(int i=0; i<numSets; i++) {
-			ArrayList<Integer> tempSet = new ArrayList<Integer>();	
+			HashSet<Integer> tempSet = new HashSet<Integer>();	
 			int setSize = Uniform(1,numElements);
 			for(int j=0;j<setSize;j++) {
 				int num = Uniform(1,numElements+1);
@@ -57,7 +57,7 @@ public class InputGenerator {
 		int counter = 1;
 		//goes through every set and assigns a random amount of elements to it
 		for(int i=0; i<numSets; i++) {
-			ArrayList<Integer> tempSet = new ArrayList<Integer>();	
+			HashSet<Integer> tempSet = new HashSet<Integer>();	
 			int setSize = Uniform(1,numElements);
 			for(int j=0;j<setSize;j++) {
 				//this if statement will place every element once in a subset, 
@@ -79,7 +79,7 @@ public class InputGenerator {
 		}
 		//This if conditions guarantees every element is in at least one set
 		if (counter<=numElements) {
-			ArrayList<Integer> tempSet = new ArrayList<Integer>();	
+			HashSet<Integer> tempSet = new HashSet<Integer>();	
 			for(int i=counter; i <=numElements;i++) {
 				tempSet.add(i);
 			}
