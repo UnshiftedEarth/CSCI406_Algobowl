@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -228,14 +230,53 @@ public class AlgoOutputGenerator {
 	}
 
 	//TODO @Amber
-	private String generateOutputFile() {
+	private String generateOutputFile() { 
 		String outputFileName = "output_" + inputFileName;
 		// TODO Auto-generated method stub
-
+		try {
+		     File myObj = new File(outputFileName);
+		     if (myObj.createNewFile()) {
+		       System.out.println("File created: " + myObj.getName());
+		     } else {
+		       System.out.println("File already exists.");
+		     }
+		   } catch (IOException e) {
+		     System.out.println("An error occurred.");
+		     e.printStackTrace();
+		   }
+		try {
+		FileWriter myWriter = new FileWriter(outputFileName);
+		int weight = calculateCoverWeight();
+		System.out.println("Cover weight: " + weight);
+		myWriter.write(Integer.toString(weight));//minWeight
+		
+		myWriter.write("\n");
+		
+		for (int i = 0; i< subsets.size(); i++){//iterate through cover
+			if (cover.contains(subsets.get(i))) {
+				myWriter.write(Integer.toString(i + 1) + " ");
+			}
+		}
+		
+		myWriter.close();
+		}catch (IOException e) {
+		     System.out.println("An error occurred.");
+		     e.printStackTrace();
+		}
 		//return name of output file
 		return outputFileName;
-	}
+		}
+
 	
+	private int calculateCoverWeight() {
+		// TODO Auto-generated method stub
+		int weight = 0;
+		for (Subset s: cover) {
+			weight += s.weight;
+		}
+		return weight;
+	}
+
 	public static void main(String[] args) {
 		String[] inputFileList = {
 				"test_1.txt",
@@ -251,8 +292,8 @@ public class AlgoOutputGenerator {
 			algo.generateCover();
 			System.out.println(inputFile + " cover was created.");
 			
-//			String outputFileName = algo.generateOutputFile();
-//			System.out.println(inputFile + " output file was created as " + outputFileName);
+			String outputFileName = algo.generateOutputFile();
+			System.out.println(inputFile + " output file was created as " + outputFileName);
 //			
 //			boolean verificationSuccess = algo.outputVerification(outputFileName);
 //			if (verificationSuccess) {
