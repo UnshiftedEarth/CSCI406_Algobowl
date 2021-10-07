@@ -4,7 +4,7 @@ import java.util.HashSet;
 public class Subset {
 
 	public int weight;
-	public HashSet<Integer> set = new HashSet<Integer>();	
+	public HashSet<Integer> set;	
 	
 	public Subset(int weight, HashSet<Integer> set) {
 		this.weight = weight;
@@ -15,7 +15,7 @@ public class Subset {
 		String setString = new String();
 		for (Integer x: set) {
 			setString += x;
-			setString += ',';
+			setString += ' ';
 		}
 		return setString.substring(0, setString.length()-1);
 	}

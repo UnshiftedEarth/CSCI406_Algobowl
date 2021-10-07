@@ -114,7 +114,7 @@ public class AlgoOutputGenerator {
 			for (Subset s: list) { 
 				if (!cover.contains(s)) listSize++;
 			}
-			if (listSize < fewestSubsets) {
+			if ((listSize < fewestSubsets) && (listSize != 0)) {
 				fewestSubsets = listSize;
 				xWithFewestSubsets = i;
 			}
@@ -128,9 +128,9 @@ public class AlgoOutputGenerator {
 	// 3. choose subset with greatest size/weight ratio
 	private Subset chooseSubsetLeastWeight(ArrayList<Subset> arrayList) {
 		//initialize with first subset
-		int chosenWeight = arrayList.get(0).weight;
-		Subset chosen = arrayList.get(0);
-		
+		Subset chosen =  arrayList.iterator().next();
+		int chosenWeight = chosen.weight;
+
 		for (Subset s: arrayList) {
 			if (s.weight < chosenWeight) {
 				chosen = s;
@@ -279,10 +279,7 @@ public class AlgoOutputGenerator {
 
 	public static void main(String[] args) {
 		String[] inputFileList = {
-				"test_1.txt",
-				"test_2.txt",
-				"test_3.txt",
-				"test_4.txt"
+				"inputfile.txt"
 		};
 		
 		for (String inputFile: inputFileList) {
@@ -294,13 +291,13 @@ public class AlgoOutputGenerator {
 			
 			String outputFileName = algo.generateOutputFile();
 			System.out.println(inputFile + " output file was created as " + outputFileName);
-//			
-//			boolean verificationSuccess = algo.outputVerification(outputFileName);
-//			if (verificationSuccess) {
-//				System.out.println(outputFileName + " output file was verified.");
-//			} else {
-//				System.out.println(outputFileName + " output file failed verification.");
-//			}
+			
+			boolean verificationSuccess = algo.outputVerification(outputFileName);
+			if (verificationSuccess) {
+				System.out.println(outputFileName + " output file was verified.");
+			} else {
+				System.out.println(outputFileName + " output file failed verification.");
+			}
 			
 			System.out.println();
 		}
